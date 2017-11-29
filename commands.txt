@@ -1,4 +1,0 @@
-/help       #   Opens Help Menu
-/h          #   Opens Help Menu
-/close      #   Closes Connection
-/shutdown   #   Shuts Down Server
