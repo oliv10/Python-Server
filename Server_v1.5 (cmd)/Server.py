@@ -20,7 +20,7 @@ socket_server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
 ###
 # Starts at the beginning to listen for incoming client connections
-class waiting(Thread):
+class listening(Thread):
 
     def run(self):
         global userList, connectionList, socket_server
@@ -60,6 +60,9 @@ class client(Thread):
 # The main user interface for the server
 class server(cmd.Cmd):
 
+    prompt = '(CMD:Server) '
+    intro = 'Message Server: Version ' + str(ver)
+
     def send(self, args):
         print('\nReceived: ' + str(args) + '\n' + self.prompt)
 
@@ -68,7 +71,7 @@ class server(cmd.Cmd):
         socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         socket_server.bind((ip, port))
         socket_server.listen(10)
-        w = waiting()
+        w = listening()
         w.setDaemon(True)
         w.start()
 
@@ -83,13 +86,10 @@ class server(cmd.Cmd):
         self.stdout.write("Quits the program and shuts down the server.\n")
 
     def do_userlist(self, args):
-        global userList, connectionList
+        global userList
         self.stdout.write("List of Connected Users:\n")
         self.stdout.write("========================\n")
-        strList = []
-        for item in connectionList:
-            strList.append(str(item))
-        self.columnize(strList,80)
+        self.columnize(userList,80)
 
     def help_userlist(self):
         self.stdout.write("Prints a list of the connected users.\n")
@@ -101,7 +101,14 @@ class server(cmd.Cmd):
             conn = connectionList[int(pos)]
             conn.send(str(msg).encode())
         except:
-            self.stdout.write("User does not exist.\n")
+            self.stdout.write("*** User does not exist.\n")
 
     def help_message(self):
-        self.stdout.write("Send message to 'pos message' in user list.\n")
+        self.stdout.write("Send message to user in list.\n")
+
+    def do_version(self, args):
+        global ver
+        self.stdout.write("Server Version " + str(ver) + '\n')
+
+    def help_version(self):
+        self.stdout.write("Version of Server.\n")
