@@ -45,9 +45,9 @@ class client(Thread):
                 if data == "/close  ":
                     break
                 msg = str(address) + ": " + str(data)
-                server.send(server,str(msg))
+                server.send(server(),str(msg))
             except:
-                server.send(server,"Crashed Connection")
+                server.send(server(),"Crashed Connection")
                 break
         try:
             userList.remove(str(address))
@@ -63,8 +63,8 @@ class server(cmd.Cmd):
     prompt = '(CMD:Server) '
     intro = 'Message Server: Version ' + str(ver)
 
-    def send(self, args):
-        print('\nReceived: ' + str(args) + '\n' + self.prompt)
+    def send(cls, args):
+        print('\nReceived: ' + str(args) + '\n' + cls.prompt)
 
     def preloop(self):
         global socket_server, ip, port
