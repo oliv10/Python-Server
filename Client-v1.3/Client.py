@@ -32,7 +32,7 @@ class listening(Thread):
 # CMD Loop changes to this when client has connected to a server successfully
 class connected(cmd.Cmd):
 
-    conn_prompt = "(CMD:Server) "
+    prompt = "(CMD:Server) "
 
     def preloop(self):
         l = listening()
@@ -40,7 +40,7 @@ class connected(cmd.Cmd):
         l.start()
 
     def send(cls, args):
-        print("\nReceived: " + str(args) + "\n" + connected.conn_prompt)
+        print("\nReceived: " + str(args) + "\n" + connected.prompt)
 
     def do_close(self, args):
         global s, connect
@@ -62,6 +62,7 @@ class connected(cmd.Cmd):
 # Main user interface for the Client
 class client(cmd.Cmd):
 
+    intro = "Message Client: Version " + str(ver)
     prompt = "(CMD:Client) "
 
     def do_quit(self, args):
@@ -79,6 +80,8 @@ class client(cmd.Cmd):
 
     def do_connect(self, args):
         global s
+        ip = None
+        port = None
         try:
             try:
                 ip, port = [str(x) for x in args.split()]
@@ -91,7 +94,7 @@ class client(cmd.Cmd):
                 s = socket.socket()
                 s.connect((ip, port))
                 serverCMD = connected()
-                serverCMD.prompt = self.prompt[:-2] + ':Server) '
+                serverCMD.prompt = self.prompt[:-8] + "Server) "
                 serverCMD.cmdloop()
             except:
                 self.stdout.write("*** Connection Refused\n")
